@@ -1,0 +1,8 @@
+<h2>Include Template</h2>
+
+<p>
+	Cum sociis natoque [{replace value3}] penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+	Proin ullamcorper tincidunt nisl. Mauris porta, [{replace value1}] elit eget condimentum consectetur, diam ligula facilisis magna,
+	a consectetur est nulla at leo. Nulla cursus lacus vitae elit. [{replace value5}] Suspendisse augue. Suspendisse potenti.
+	Nam in sem. [{replace value2}] Vivamus dui libero, semper non, aliquet nec, ultricies sit amet, [{replace value4}] nisl.
+</p>

@@ -1,0 +1,92 @@
+<hr>
+
+<h1>[{replace header1}]</h1>
+
+<h2>Replace &amp; Replace Raw</h2>
+<p>[{replace header2}].</p>
+<p>[{replace header2 raw}].</p>
+
+<h1>Condition Sets</h1>
+
+[{condition in_set in 1 2 3}]
+	<p>In 1, 2 or 3!</p>
+[{condition in_set end}]
+
+[{condition in_set !in 1 2 3}]
+	<p><strong>NOT</strong> in 1, 2 or 3!</p>
+[{condition in_set end}]
+
+[{if in_set2 in foo bar}]
+	<p>Either foo or bar: <strong>[{var in_set2}]</strong></p>
+[{if in_set2 end}]
+
+<h1>Recursive Repeater</h1>
+
+[{section ListWrapper}]
+
+	<ol>
+
+		<!--[{loop MyList}]-->
+			<li>
+				Level [{replace level}], value: [{replace value}]
+				<ol>
+					<!--	[{section SubList}][{section SubList end}]		-->
+				</ol>
+			</li>
+		<!--[{loop MyList end}]-->
+
+	</ol>
+
+[{section ListWrapper end}]
+
+<h1>Nested Sections &amp; Includes</h1>
+
+<p>Below, both "Static Include" and "Include Template" should be present.</p>
+
+[{section Test}]
+
+	[{section Iets}]
+
+		[{section Iets}]
+
+			<!--[{include "IncludeStatic.html"}]-->
+
+		[{section Iets end}]
+
+	[{section Iets end}]
+
+	[{section NogIets}]
+
+		[{section Iets}]
+
+			[{condition test_me is false}]
+				[{include template "IncludeTemplate.tp4" as WoeiTemplate}]
+			[{condition test_me end}]
+
+			<p style="[{condition lipsum_bold is true local}]font-weight:bold;[{condition lipsum_bold end}]">
+				Lorem ipsum inside a section...
+			</p>
+
+		[{section Iets end}]
+
+	[{section NogIets end}]
+
+[{section Test end}]
+
+<p style="[{condition lipsum_bold is true}]font-weight:bold;[{condition lipsum_bold end}]">
+	Lorem ipsum in global scope (should be bold)...
+</p>
+
+<h1>Repeater &amp; Scope</h1>
+
+<ul>
+
+	<!-- [{repeater BulletList}] -->
+
+		<li>[{replace random_string}] - [{replace bullet_item raw}]</li>
+
+	<!-- [{repeater BulletList end }] -->
+
+</ul>
+
+<hr>
