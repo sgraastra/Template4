@@ -1,4 +1,6 @@
 {
+  "name": "studyportals/template4",
+  "description": "Composer-package for Studyportals' Template4 template-engine",
   "config": {
     "platform": {
       "php": "7.2"
