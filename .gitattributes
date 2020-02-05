@@ -1,0 +1,18 @@
+[core]
+    whitespace=tabwidth=4
+
+* text=auto
+
+# Shell scripts should use LF (bin/sh will otherwise complain)
+*.sh eol=lf
+.github/hooks/* eol=lf
+
+# Prevent repo-template/update.sh from generating unnecessary warnings
+.github/repo-template/revision eol=lf
+
+# Force line-endings to LF for automatically generated files - this should
+# prevent unnecessary switching of line-endings when generating these files on
+# different platforms (e.g. Linux versus Windows).
+.gitignore eol=lf
+composer.json eol=lf
+composer.lock eol=lf
