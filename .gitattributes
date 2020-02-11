@@ -16,3 +16,9 @@
 .gitignore eol=lf
 composer.json eol=lf
 composer.lock eol=lf
+
+# TemplateTest::testCache() and TemplateTest::testRender() depend on CRLF
+# line-endings (in specific input files); removing the below will break these
+# test-cases on non-Windows platforms!
+tests/integration/Expected/Render.html eol=crlf
+tests/integration/Resources/IncludeStatic.html eol=crlf
