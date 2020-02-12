@@ -286,7 +286,7 @@ class TokenList
 
                     throw new TokenListException(
                         "Expected next token to be
-						\"$expected_token\", \"$token\" encountered"
+                        \"$expected_token\", \"$token\" encountered"
                     );
                 }
 
@@ -298,7 +298,7 @@ class TokenList
 
                     throw new TokenListException(
                         "Expected next token to be
-						\"$expected_token\", \"$token\" encountered"
+                        \"$expected_token\", \"$token\" encountered"
                     );
                 }
         }
@@ -472,7 +472,7 @@ class TokenList
             default:
                 throw new TokenListException(
                     "Expected next token to be a value token,
-					\"$token\" encountered"
+                    \"$token\" encountered"
                 );
         }
     }

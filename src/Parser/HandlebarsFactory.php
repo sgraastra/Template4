@@ -7,7 +7,6 @@
 
 namespace StudyPortals\Template\Parser;
 
-use StudyPortals\CMS\ExceptionHandler;
 use StudyPortals\Template\Node;
 use StudyPortals\Template\NodeTree;
 use StudyPortals\Template\TemplateException;
@@ -98,14 +97,14 @@ class HandlebarsFactory extends Factory
 
                                 case 'in':
                                 case '!in':
-                                default:
-                                    ExceptionHandler::notice(
-                                        'Operators "in" and "!in" are not
-                                        implemented for Handlebars, defaulting
-                                        to "if"'
+                                    throw new TemplateException(
+                                        'Operators "in" and "!in" are not implemented for Handlebars'
                                     );
 
-                                    break;
+                                default:
+                                    throw new TemplateException(
+                                        "Unknown comparison operator {$operator} encountered"
+                                    );
                             }
 
                             // Check for local condition
@@ -166,7 +165,7 @@ class HandlebarsFactory extends Factory
                 default:
                     throw new FactoryException(
                         "Error while building Template,
-						unexpected \"$TokenList->token\" encountered"
+                        unexpected \"$TokenList->token\" encountered"
                     );
             }
         } while ($TokenList->nextToken());

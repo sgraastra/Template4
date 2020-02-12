@@ -7,11 +7,9 @@
 
 namespace StudyPortals\Template;
 
-use StudyPortals\CMS\Site\Site;
 use StudyPortals\Template\Parser\FactoryException;
 use StudyPortals\Template\Parser\HandlebarsFactory;
 use StudyPortals\Template\Parser\TokenListException;
-use StudyPortals\Utils\File;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -28,7 +26,6 @@ class Handlebars extends Template
      * @throws FactoryException
      * @throws TemplateException
      * @throws TokenListException
-     * @throws \StudyPortals\Cache\CacheException
      * @return Handlebars
      * @see Factory::templateFactory()
      */
@@ -39,7 +36,7 @@ class Handlebars extends Template
         $name = basename($template_file);
         $directory = dirname($template_file);
 
-        $extension = File::getExtension($template_file);
+        $extension = pathinfo($template_file, PATHINFO_EXTENSION);
         $name = (string) substr($name, 0, (int) strrpos($name, '.'));
 
         $cache_file = "$directory/$name-handlebars.$extension-cache";
@@ -67,12 +64,6 @@ class Handlebars extends Template
             if (Template::$cache_enabled) {
                 parent::storeCachedTemplate($Template, $cache_file);
             }
-        }
-
-        // Add Site's base URL (this must be some kind of clean-code violation... :)
-
-        if (Site::singleton() instanceof Site) {
-            $Template->base_url = Site::singleton()->base_url;
         }
 
         return $Template;

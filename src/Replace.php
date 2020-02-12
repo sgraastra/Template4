@@ -64,7 +64,7 @@ class Replace extends Node
         if (!$this->isValidName($replace)) {
             throw new TemplateException(
                 "Invalid name \"$replace\"
-				specified for Replace node"
+                specified for Replace node"
             );
         }
 
@@ -105,7 +105,7 @@ class Replace extends Node
             $value = htmlspecialchars(
                 (string) $value,
                 ENT_COMPAT | ENT_HTML401,
-                DEFAULT_CHARSET
+                'UTF-8'
             );
         }
 

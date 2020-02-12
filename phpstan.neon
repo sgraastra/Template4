@@ -1,2 +1,6 @@
 parameters:
   inferPrivatePropertyTypeFromConstructor: true
+  universalObjectCratesClasses:
+    - StudyPortals\Template\Template
+    - StudyPortals\Template\TemplateNodeTree
+  level: max

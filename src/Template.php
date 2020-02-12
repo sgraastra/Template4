@@ -7,7 +7,7 @@
 
 namespace StudyPortals\Template;
 
-use StudyPortals\Cache\CacheStore;
+use Psr\SimpleCache\CacheInterface;
 use StudyPortals\Template\Parser\Factory;
 use StudyPortals\Template\Parser\FactoryException;
 use StudyPortals\Template\Parser\TokenListException;
@@ -33,7 +33,7 @@ class Template extends TemplateNodeTree
 {
 
     /**
-     * @var CacheStore|null $CacheStore
+     * @var CacheInterface|null $CacheStore
      **/
     protected static $CacheStore;
 
@@ -118,7 +118,7 @@ class Template extends TemplateNodeTree
      * The optional second argument {@link $locale} should
      * always be an empty string (c.q. its default value). This argument is
      * there to ensure method consistency with LocalizedFactory which inherits
-     * from this method. The order was chosen in such a way to minise the need
+     * from this method. The order was chosen in such a way to minimise the need
      * to overwrite the default arguments.
      *
      * This method provides an automated template cache. It compares the date
@@ -143,7 +143,6 @@ class Template extends TemplateNodeTree
      * @throws FactoryException
      * @throws TemplateException
      * @throws TokenListException
-     * @throws \StudyPortals\Cache\CacheException
      * @return Template
      * @see Template::_parseTemplate()
      * @see Template::setTemplateCacheHandler()
@@ -201,7 +200,7 @@ class Template extends TemplateNodeTree
         try {
             return self::templateFactory($template_file);
         } catch (
-            \StudyPortals\Cache\CacheException
+            \Psr\SimpleCache\CacheException
             | CacheException
             | TokenListException
             | FactoryException $e
@@ -253,7 +252,6 @@ class Template extends TemplateNodeTree
      * @param Template $Template
      * @param string $cache_file
      * @throws CacheException
-     * @throws \StudyPortals\Cache\CacheException
      * @return void
      */
 
@@ -292,7 +290,7 @@ class Template extends TemplateNodeTree
 
         // Fallback to simple file-system caching
 
-        if (!(self::$CacheStore instanceof CacheStore)) {
+        if (!(self::$CacheStore instanceof CacheInterface)) {
             $result = @file_put_contents($cache_file, serialize($Template), LOCK_EX | FILE_TEXT);
             assert($result > 0);
 
@@ -374,15 +372,14 @@ class Template extends TemplateNodeTree
         string $template_base
     ): ?Template {
 
-        if ($template_mtime !== false && self::$CacheStore instanceof CacheStore) {
+        if ($template_mtime !== false && self::$CacheStore instanceof CacheInterface) {
             $cache_handler = get_class(self::$CacheStore);
             $cache_entry = md5($template_mtime . $cache_file);
 
-            $error = false;
-            $Template = self::$CacheStore->get($cache_entry, $error);
+            $Template = self::$CacheStore->get($cache_entry);
 
              // Delete the invalid entry
-            if ($error) {
+            if (is_null($Template)) {
                 self::$CacheStore->delete($cache_entry);
 
                 throw new CacheException(
@@ -479,11 +476,11 @@ class Template extends TemplateNodeTree
      * CacheStore to this method. When no store is provided, Template4 falls
      * back to a simple file-system cache.
      *
-     * @param CacheStore $CacheStore
+     * @param CacheInterface $CacheStore
      * @return void
      */
 
-    public static function setTemplateCacheStore(CacheStore $CacheStore)
+    public static function setTemplateCacheStore(CacheInterface $CacheStore)
     {
 
         self::$CacheStore = $CacheStore;

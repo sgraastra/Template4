@@ -1,3 +1,5 @@
 /vendor/
 cghooks.lock
 .phpunit.result.cache
+
+*.tp4-cache

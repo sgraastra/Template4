@@ -7,7 +7,9 @@
 
 namespace StudyPortals\Template;
 
-class CacheException extends TemplateException
+use Psr\SimpleCache\CacheException as SimpleCacheCacheException;
+
+class CacheException extends TemplateException implements SimpleCacheCacheException
 {
 
 }

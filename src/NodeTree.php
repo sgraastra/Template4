@@ -285,7 +285,7 @@ abstract class NodeTree extends Node
 
         throw new NodeNotFoundException(
             "Cannot replace node \"{$Child->getName()}\",
-			not a child node"
+            not a child node"
         );
     }
 

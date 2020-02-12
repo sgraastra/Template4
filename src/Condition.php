@@ -7,8 +7,6 @@
 
 namespace StudyPortals\Template;
 
-use StudyPortals\CMS\ExceptionHandler;
-
 /**
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
@@ -154,10 +152,9 @@ class Condition extends NodeTree
                 return $match;
 
             default:
-                ExceptionHandler::notice(
+                throw new TemplateException(
                     "Unknown comparison operator {$this->operator} encountered"
                 );
-                return false;
         }
     }
 

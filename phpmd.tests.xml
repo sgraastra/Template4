@@ -13,13 +13,14 @@
     <exclude name="StaticAccess"/>
   </rule>
 
-  <!-- "Static access" is only allowed for Mockery -->
+  <!-- Static access is allowed for certain established cases -->
 
   <rule ref="rulesets/cleancode.xml/StaticAccess">
     <properties>
       <property name="exceptions">
         <value>
-          \Mockery
+          \Mockery,
+          \StudyPortals\Template\Template
         </value>
       </property>
     </properties>

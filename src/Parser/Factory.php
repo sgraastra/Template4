@@ -48,7 +48,7 @@ class Factory
         if (!file_exists($template_file) || !is_readable($template_file)) {
             throw new FactoryException(
                 'Cannot parse template "' . basename($template_file) . '",
-				file not found or access denied'
+                file not found or access denied'
             );
         }
 
@@ -378,7 +378,7 @@ class Factory
                 if (strtolower($definition[3]) != 'as') {
                     throw new InvalidSyntaxException(
                         "Invalid syntax for include-statement, expected \"as\",
-						got \"$definition[3]\""
+                        got \"$definition[3]\""
                     );
                 }
 
@@ -450,7 +450,7 @@ class Factory
             } elseif ($expected_name != $element_name) { // Name match
                 throw new InvalidSyntaxException(
                     "Expected $element_type with name \"$expected_name\",
-					got \"$element_name\""
+                    got \"$element_name\""
                 );
             }
 
@@ -889,7 +889,7 @@ class Factory
                     if (!($RootNode instanceof Template)) {
                         throw new FactoryException(
                             'Expecting root-node to be instance of Template,
-							got ' . get_class($RootNode)
+                            got ' . get_class($RootNode)
                         );
                     }
 
@@ -910,7 +910,7 @@ class Factory
                         if (!file_exists($file_name) || !is_readable($file_name)) {
                             throw new FactoryException(
                                 'Error while including "' . basename($file_name) . '",
-								file not found or access denied'
+                                file not found or access denied'
                             );
                         }
                     }
@@ -1037,7 +1037,7 @@ class Factory
                 default:
                     throw new FactoryException(
                         "Error while building Template,
-						unexpected \"$TokenList->token\" encountered"
+                        unexpected \"$TokenList->token\" encountered"
                     );
             }
         } while ($TokenList->nextToken());

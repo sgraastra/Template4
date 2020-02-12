@@ -7,9 +7,21 @@
 
 namespace StudyPortals\Template;
 
-use StudyPortals\Exception\BaseException;
+use Exception;
+use Throwable;
 
-class TemplateException extends BaseException
+class TemplateException extends Exception
 {
 
+    public function __construct(
+        string $message = '',
+        int $code = 0,
+        Throwable $previous = null
+    ) {
+        // Remove all superfluous white-spaces for increased readability
+
+        $message = (string) preg_replace('/\s+/', ' ', $message);
+
+        parent::__construct($message, $code, $previous);
+    }
 }

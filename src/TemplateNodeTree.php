@@ -7,8 +7,6 @@
 
 namespace StudyPortals\Template;
 
-use StudyPortals\CMS\ExceptionHandler;
-
 /**
  * TemplateNodeTree
  *
@@ -60,7 +58,7 @@ abstract class TemplateNodeTree extends NodeTree
         if (!$this->isValidName($name)) {
             throw new TemplateException(
                 "Unable to create Template node,
-				the specified name \"$name\" is invalid"
+                the specified name \"$name\" is invalid"
             );
         }
 
@@ -162,36 +160,32 @@ abstract class TemplateNodeTree extends NodeTree
 
         assert(!isset($this->$name));
 
-        try {
-            if ($value instanceof TemplateNodeTree) {
-                try {
-                    $Node = $this->getChildByName($name);
+        if ($value instanceof TemplateNodeTree) {
+            try {
+                $Node = $this->getChildByName($name);
 
-                    // Node is a virtual child
+                // Node is a virtual child
 
-                    if (
-                        $Node->Parent !== $this
-                        && $Node->Parent instanceof NodeTree
-                    ) {
-                        $Node->Parent->replaceChild($Node, $value);
+                if (
+                    $Node->Parent !== $this
+                    && $Node->Parent instanceof NodeTree
+                ) {
+                    $Node->Parent->replaceChild($Node, $value);
 
-                        // Clear (the now invalidated) virtual child cache
+                    // Clear (the now invalidated) virtual child cache
 
-                        $this->virtual_children = [];
-                        return;
-                    }
-
-                    $this->replaceChild($Node, $value);
+                    $this->virtual_children = [];
                     return;
-                } catch (NodeNotFoundException $e) {
-                    // Pass-through is intentional
                 }
+
+                $this->replaceChild($Node, $value);
+                return;
+            } catch (NodeNotFoundException $e) {
+                // Pass-through is intentional
             }
-            $this->setValue($name, $value);
-            return;
-        } catch (TemplateException $e) {
-            ExceptionHandler::notice($e->getMessage());
         }
+        $this->setValue($name, $value);
+        return;
     }
 
     /**
