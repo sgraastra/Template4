@@ -22,14 +22,12 @@ class TokenList
 
     public const T_MODULE = 'MODULE';
     public const T_REPLACE = 'REPLACE';
-    public const T_REPLACE_LOCAL = 'REPLACE_LOCAL';
     public const T_TEXT_HTML = 'TEXT_HTML';
     public const T_START_ELEMENT = 'START_ELEMENT';
     public const T_END_ELEMENT = 'END_ELEMENT';
     public const T_START_DEFINITION = 'START_DEFINITION';
     public const T_END_DEFINITION = 'END_DEFINITION';
     public const T_NAME = 'NAME';
-    public const T_LOCAL = 'LOCAL';
     public const T_RAW = 'RAW';
     public const T_INCLUDE = 'INCLUDE';
     public const T_INCLUDE_TEMPLATE = 'INCLUDE_TEMPLATE';
@@ -146,7 +144,6 @@ class TokenList
             // Named tokens
 
             case self::T_REPLACE:
-            case self::T_REPLACE_LOCAL:
             case self::T_NAME:
             case self::T_CLASS:
             case self::T_MODULE:
@@ -204,7 +201,6 @@ class TokenList
 
             // Empty tokens
 
-            case self::T_LOCAL:
             case self::T_RAW:
             case self::T_VALUE_NULL:
                 if (trim((string) $token_data) == '') {

@@ -63,8 +63,8 @@
 				[{include template "IncludeTemplate.tp4" as WoeiTemplate}]
 			[{condition test_me end}]
 
-			<p style="[{condition lipsum_bold is true local}]font-weight:bold;[{condition lipsum_bold end}]">
-				Lorem ipsum inside a section...
+			<p style="[{condition lipsum_bold is true}]font-weight:bold;[{condition lipsum_bold end}]">
+				Lorem ipsum inside a section (should not be bold)...
 			</p>
 
 		[{section Iets end}]

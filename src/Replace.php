@@ -17,12 +17,6 @@ class Replace extends Node
     protected $replace;
 
     /**
-     * @var boolean $local
-     */
-
-    protected $local = false;
-
-    /**
      * @var boolean $raw
      */
 
@@ -35,12 +29,6 @@ class Replace extends Node
      * runtime. The {@link $replace} parameter is the name of the value which
      * will contain the replacement content.
      *
-     * The optional {@link $local} parameter indicates whether the entire
-     * Template tree should be searched for the replace value, or only the local
-     * scope should be used.
-     * Local scope in this case refers to the "virtual" Template tree as defined
-     * in the description of the {@link NodeTree::getChildByName()} method.
-     *
      * The optional {@link $raw} parameter indicates whether the value should
      * be treated as raw HTML. When enabled, the value will not
      * filtered to prevent accidental inclusion of HTML into the template
@@ -48,7 +36,6 @@ class Replace extends Node
      *
      * @param NodeTree $Parent
      * @param string $replace
-     * @param boolean $local
      * @param boolean $raw
      * @throws TemplateException
      * @see TemplateNodeTree::setValue()
@@ -57,7 +44,6 @@ class Replace extends Node
     public function __construct(
         NodeTree $Parent,
         $replace,
-        $local = null,
         $raw = null
     ) {
 
@@ -72,7 +58,6 @@ class Replace extends Node
 
         $this->replace = $replace;
 
-        $this->local = (is_null($local) ? $this->local : (bool) $local);
         $this->raw = (is_null($raw) ? $this->raw : (bool) $raw);
     }
 
@@ -95,11 +80,8 @@ class Replace extends Node
             return '';
         }
 
-        $value = $this->Parent->getLocalValue($this->replace);
 
-        if (is_null($value) && !$this->local) {
-            $value = $this->Parent->getValue($this->replace);
-        }
+        $value = $this->Parent->getValue($this->replace);
 
         if (!$this->raw) {
             $value = htmlspecialchars(

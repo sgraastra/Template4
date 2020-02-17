@@ -38,12 +38,6 @@ class Condition extends NodeTree
     protected $value_set = [];
 
     /**
-     * @var boolean $local
-     */
-
-    protected $local = false;
-
-    /**
      * Construct a new Condition Node.
      *
      * The contents of this Node will be displayed based upon a condition
@@ -52,33 +46,19 @@ class Condition extends NodeTree
      * {@link $condition} parameter contains the name of the value queried from
      * the Template tree.
      *
-     * The optional {@link $local} parameter indicates whether the entire
-     * Template tree should be searched for the condition value, or only the
-     * local scope should be used.
-     * Local scope in this case refers to the "virtual" Template tree as defined
-     * in the description of the {@link NodeTree::getChildByName()} method.
-     *
      * @param NodeTree $Parent
      * @param string $condition
      * @param string $operator
      * @param string|array<string> $value
-     * @param boolean $local
      * @throws TemplateException
-     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
 
     public function __construct(
         NodeTree $Parent,
         string $condition,
         string $operator,
-        $value,
-        bool $local = false
+        $value
     ) {
-        /*
-         * TODO: Refactor the boolean-property $local out by creating a
-         * Condition and LocalCondition class. Too much hassle for now (hence
-         * the suppressed PHPMD warning).
-         */
 
         if (!$this->isValidName($condition)) {
             throw new TemplateException(
@@ -90,7 +70,6 @@ class Condition extends NodeTree
 
         $this->condition = $condition;
         $this->operator = $operator;
-        $this->local = $local;
 
         // Set-values
 
@@ -170,14 +149,6 @@ class Condition extends NodeTree
         $value = null;
 
         if ($this->Parent instanceof NodeTree) {
-            $value = $this->Parent->getLocalValue($this->condition);
-        }
-
-        if (
-            !$this->local &&
-            $value === null &&
-            $this->Parent instanceof NodeTree
-        ) {
             $value = $this->Parent->getValue($this->condition);
         }
 

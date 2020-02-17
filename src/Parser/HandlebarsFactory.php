@@ -107,7 +107,7 @@ class HandlebarsFactory extends Factory
                                     );
                             }
 
-                            // Check for local condition
+                            // Check for logical condition
 
                             if ($value === true) {
                                 $value = 'true';

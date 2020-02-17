@@ -292,23 +292,15 @@ class Factory
     ) {
         $TemplateTokens->addToken(TokenList::T_REPLACE, $definition[1]);
 
-        foreach (array_slice($definition, 2) as $value) {
-            switch (strtolower($value)) {
-                case 'local':
-                    $TemplateTokens->addToken(TokenList::T_LOCAL);
+        if (isset($definition[2]) && $definition[2] == 'raw') {
+            $TemplateTokens->addToken(TokenList::T_RAW);
+            return;
+        }
 
-                    break;
-
-                case 'raw':
-                    $TemplateTokens->addToken(TokenList::T_RAW);
-
-                    break;
-
-                default:
-                    throw new InvalidSyntaxException(
-                        "Invalid parameter \"$value\" for replace-statement"
-                    );
-            }
+        if (count($definition) > 2) {
+            throw new InvalidSyntaxException(
+                'Invalid number of arguments for replace-statement'
+            );
         }
     }
 
@@ -506,13 +498,6 @@ class Factory
         // Condition
 
         if ($element_type == 'condition') {
-            // Scope
-
-            if (end($definition) == 'local') {
-                array_pop($definition);
-                $TemplateTokens->addToken(TokenList::T_LOCAL);
-            }
-
             // Operator
 
             try {
@@ -839,39 +824,32 @@ class Factory
 
         do {
             switch ($TokenList->token) {
-             // Text
+                // Text
 
                 case TokenList::T_TEXT_HTML:
                     new Text($TokenList->token_data, $Parent);
 
                     break;
 
-             // Replace
+                // Replace
 
                 case TokenList::T_REPLACE:
                     $replace = $TokenList->token_data;
-                    $local = false;
-                    $raw = false;
 
-                    // Collect parameters
+                    // "raw"-replace
 
-                    while ($TokenList->nextToken()) {
-                        switch ($TokenList->token) {
-                            case TokenList::T_LOCAL:
-                                $local = true;
-                                break;
+                    $TokenList->nextToken();
 
-                            case TokenList::T_RAW:
-                                $raw = true;
-                                break;
-
-                            default:
-                                $TokenList->previousToken();
-                                break 2;
-                        }
+                    if ($TokenList->token === TokenList::T_RAW) {
+                        new Replace($Parent, $replace, true);
+                        break;
                     }
 
-                    new Replace($Parent, $replace, $local, $raw);
+                    $TokenList->previousToken();
+
+                    // Regular-replace
+
+                    new Replace($Parent, $replace);
 
                     break;
 
@@ -880,7 +858,7 @@ class Factory
 
                     break;
 
-             // Includes
+                // Includes
 
                 case TokenList::T_INCLUDE:
                 case TokenList::T_INCLUDE_TEMPLATE:
@@ -959,7 +937,7 @@ class Factory
 
                     break;
 
-             // Elements
+                // Elements
 
                 case TokenList::T_START_ELEMENT:
                     $element_id = $TokenList->token_data;
@@ -968,7 +946,7 @@ class Factory
                     $element_name = $TokenList->nextData(TokenList::T_NAME);
 
                     switch ($element_type) {
-                     // Section
+                        // Section
 
                         case 'section':
                             $Child = new Section($element_name, $Parent);
@@ -980,30 +958,19 @@ class Factory
 
                             break;
 
-                     // Condition
+                        // Condition
 
                         case 'condition':
-                            $local = true;
-
-                            // Check for local condition
-
-                            try {
-                                $TokenList->nextToken(TokenList::T_LOCAL);
-                            } catch (TokenListException $e) {
-                                $local = false;
-                            }
-
                             $Child = new Condition(
                                 $Parent,
                                 $element_name,
                                 $TokenList->nextData(TokenList::T_OPERATOR),
-                                $TokenList->nextData(TokenList::T_VALUE),
-                                $local
+                                $TokenList->nextData(TokenList::T_VALUE)
                             );
 
                             break;
 
-                     // Repeater
+                        // Repeater
 
                         case 'repeater':
                             $Child = new Repeater($element_name, $Parent);
@@ -1032,7 +999,7 @@ class Factory
 
                     break;
 
-             // Unexpected token
+                // Unexpected token
 
                 default:
                     throw new FactoryException(

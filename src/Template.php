@@ -110,17 +110,6 @@ class Template extends TemplateNodeTree
      * node will be the filename of the original {@link $template_file}, with
      * all illegal characters stripped.
      *
-     * The optional third argument {@link $html} is used to
-     * indicate the template to be parsed contains HTML; it is enabled by
-     * default. When switched on, several parsing optimisations geared towards
-     * HTML (but destructive to plain-text) are enabled. If you need to parse a
-     * plaint-text template file, disabled this option.
-     * The optional second argument {@link $locale} should
-     * always be an empty string (c.q. its default value). This argument is
-     * there to ensure method consistency with LocalizedFactory which inherits
-     * from this method. The order was chosen in such a way to minimise the need
-     * to overwrite the default arguments.
-     *
      * This method provides an automated template cache. It compares the date
      * of the original template against the cached template. If the original
      * template has been updated, or the cache does not exist, the cache is
