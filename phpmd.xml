@@ -17,4 +17,5 @@
   <rule ref="rulesets/design.xml"/>
   <rule ref="rulesets/unusedcode.xml"/>
 
+  <exclude-pattern>tests\*</exclude-pattern>
 </ruleset>

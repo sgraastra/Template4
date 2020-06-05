@@ -4,7 +4,7 @@ php:
 install:
   - composer install
 script:
-  - composer phpunit
+  - composer phpunit:coverage
   - composer phpstan
   - composer phpcs
   - composer phpmd

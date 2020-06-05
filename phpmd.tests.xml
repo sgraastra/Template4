@@ -39,4 +39,5 @@
   <rule ref="rulesets/design.xml"/>
   <rule ref="rulesets/unusedcode.xml"/>
 
+  <exclude-pattern>src\*</exclude-pattern>
 </ruleset>

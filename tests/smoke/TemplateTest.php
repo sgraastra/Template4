@@ -41,7 +41,7 @@ namespace StudyPortals\Template\Parser{
     }
 }
 
-namespace StudyPortals\Template\Tests\Integration{
+namespace StudyPortals\Template\Tests\Smoke{
 
     use PHPUnit\Framework\TestCase;
     use StudyPortals\Template\Parser\Factory;
@@ -240,5 +240,45 @@ namespace StudyPortals\Template\Tests\Integration{
 
             return $Repeater;
         }
+
+        /**
+         * Render the expected smoke-test outcomes
+         *
+         * @return void
+         * @SuppressWarnings(PHPMD.StaticAccess)
+         */
+
+        public static function renderExpected()
+        {
+            global $mockUniqid;
+            $mockUniqid = true;
+
+            $tokenList = Factory::parseTemplate(
+                __DIR__ . '/Resources/TemplateTest.tp4'
+            );
+
+            file_put_contents(__DIR__ . '/Expected/TokenList.bin', serialize($tokenList));
+
+            $mockUniqid = false;
+
+            @unlink(__DIR__ . '/Resources/TemplateTest.tp4-cache');
+            $template = Template::create(__DIR__ . '/Resources/TemplateTest.tp4');
+
+            $cache = (string) file_get_contents(
+                __DIR__ . '/Resources/TemplateTest.tp4-cache'
+            );
+            $cache = (string) preg_replace(
+                '/file_name";s:[0-9]{1,}:".*";/',
+                'file_name";s:12:"Hello World!";',
+                $cache
+            );
+
+            file_put_contents(__DIR__ . '/Expected/Cache.bin', $cache);
+
+            TemplateTest::fillTemplate($template);
+
+            file_put_contents(__DIR__ . '/Expected/Render.html', $template->__toString());
+        }
     }
+
 }

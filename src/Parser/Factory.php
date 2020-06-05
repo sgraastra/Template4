@@ -752,17 +752,15 @@ class Factory
     private static function addValueToken($value, TokenList $TemplateTokens)
     {
 
-        if (is_numeric($value)) {
-            $TemplateTokens->addToken(TokenList::T_VALUE_INT, (string) $value);
-
-            return;
-        }
-
         if (is_array($value)) {
             $TemplateTokens->addToken(
                 TokenList::T_VALUE_ARRAY,
                 serialize($value)
             );
+
+            return;
+        } elseif (is_numeric($value)) {
+            $TemplateTokens->addToken(TokenList::T_VALUE_INT, (string) $value);
 
             return;
         }
