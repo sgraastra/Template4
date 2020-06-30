@@ -25,7 +25,7 @@
   "scripts": {
     "phpunit": "phpunit",
     "phpunit:coverage": "phpunit --coverage-clover clover.xml",
-    "phpstan": "phpstan analyse src/",
+    "phpstan": "phpstan analyse src/ tests/",
     "phpcs": "phpcs --colors -p -n src/ tests/",
     "phpcbf": "phpcbf --colors -p -n src/ tests/",
     "phpmd": "phpmd src/ text phpmd.xml",

@@ -1,92 +1,119 @@
-<hr>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template4 Test</title>
+</head>
+<body>
 
-<h1>[{replace header1}]</h1>
+	<h1>[{var header1}]</h1>
 
-<h2>Replace &amp; Replace Raw</h2>
-<p>[{replace header2}].</p>
-<p>[{replace header2 raw}].</p>
+	<h2>Replace &amp; Replace Raw</h2>
+	<p>[{replace header2}].</p>
+	<p>[{var header2 raw}].</p>
 
-<h1>Condition Sets</h1>
+	<h1>Condition Sets</h1>
 
-[{condition in_set in 1 2 3}]
-	<p>In 1, 2 or 3!</p>
-[{condition in_set end}]
+	[{if in_set in 1 2 3}]
+		<p>In 1, 2 or 3!</p>
+	[{if in_set end}]
 
-[{condition in_set !in 1 2 3}]
-	<p><strong>NOT</strong> in 1, 2 or 3!</p>
-[{condition in_set end}]
+	[{condition in_set !in 1 2 3}]
+		<p><strong>NOT</strong> in 1, 2 or 3!</p>
+	[{condition in_set end}]
 
-[{if in_set2 in foo bar}]
-	<p>Either foo or bar: <strong>[{var in_set2}]</strong></p>
-[{if in_set2 end}]
+	[{if quoted_if is "Hello World!"}]
+		<p>Quoted if-statement</p>
+	[{if quoted_if end}]
 
-<h1>Recursive Repeater</h1>
+	[{if quoted_set in "Hello World!" "Foo"}]
+		<p>In "Hello World!" or "Foo"</p>
+	[{if quoted_set end}]
 
-[{section ListWrapper}]
+	[{if in_set2 in foo bar}]
+		<p>Either foo or bar: <strong>[{var in_set2}]</strong></p>
+	[{if in_set2 end}]
 
-	<ol>
+	<p>
+		The following line should end with <strong>[{replace random_string}]</strong>.
+		<br/>
+		Here are some literal [, ], { and } characters; [Hello] {World}!
+	</p>
 
-		<!--[{loop MyList}]-->
-			<li>
-				Level [{replace level}], value: [{replace value}]
-				<ol>
-					<!--	[{section SubList}][{section SubList end}]		-->
-				</ol>
-			</li>
-		<!--[{loop MyList end}]-->
+	<h1>Recursive Repeater</h1>
 
-	</ol>
+	[{section ListWrapper}]
 
-[{section ListWrapper end}]
+		<ol>
 
-<h1>Nested Sections &amp; Includes</h1>
+			<!--[{loop MyList}]-->
+				<li>
+					Level [{var level}], value: [{var value}]
+					<ol>
+						<!--	[{section SubList}][{section SubList end}]    	-->
+					</ol>
+				</li>
+			<!--[{loop MyList end}]-->
 
-<p>Below, both "Static Include" and "Include Template" should be present.</p>
+		</ol>
 
-[{section Test}]
+	[{section ListWrapper end}]
 
-	[{section Iets}]
+	<h1>Nested Sections &amp; Includes</h1>
 
-		[{section Iets}]
+	<p>Below, "Static include" and "Include template" and "Include template with
+	spaces" should be present.</p>
 
-			<!--[{include "IncludeStatic.html"}]-->
+	[{section Test}]
 
-		[{section Iets end}]
+		[{section Something}]
 
-	[{section Iets end}]
+			[{section Something}]
 
-	[{section NogIets}]
+				<!--[{include "IncludeStatic.html"}]-->
 
-		[{section Iets}]
+			[{section Something end}]
 
-			[{condition test_me is false}]
-				[{include template "IncludeTemplate.tp4" as WoeiTemplate}]
-			[{condition test_me end}]
+		[{section Something end}]
 
-			<p style="[{condition lipsum_bold is true}]font-weight:bold;[{condition lipsum_bold end}]">
-				Lorem ipsum inside a section (should not be bold)...
-			</p>
+		[{section SomethingElse}]
 
-		[{section Iets end}]
+			[{section Something}]
 
-	[{section NogIets end}]
+				[{if test_me is false}]
+					[{include template "IncludeTemplate.tp4" as "FooTemplate"}]
+				[{if test_me end}]
 
-[{section Test end}]
+				<p [{if lipsum_bold is true}]style="font-weight:bold;"[{if lipsum_bold end}]>
+					Lorem ipsum inside a section...
+				</p>
 
-<p style="[{condition lipsum_bold is true}]font-weight:bold;[{condition lipsum_bold end}]">
-	Lorem ipsum in global scope (should be bold)...
-</p>
+			[{section Something end}]
 
-<h1>Repeater &amp; Scope</h1>
+		[{section SomethingElse end}]
 
-<ul>
+		[{include template "Include with Spaces.tp4"}]
 
-	<!-- [{repeater BulletList}] -->
+	[{section Test end}]
 
-		<li>[{replace random_string}] - [{replace bullet_item raw}]</li>
+	[{if lipsum_bold !is false}]
+		<p [{if lipsum_bold is true}]style="font-weight:bold;"[{if lipsum_bold end}]>
+			Double-nested: Lorem ipsum in global scope (should be bold)...
+		</p>
+	[{if lipsum_bold end}]
 
-	<!-- [{repeater BulletList end }] -->
+	<h1>Repeater &amp; Scope</h1>
 
-</ul>
+	<ul>
 
-<hr>
+		<!-- [{repeater BulletList}] -->
+
+			<li>[{replace random_string}] &ndash; [{var bullet_item raw}]</li>
+
+		<!-- [{repeater BulletList end }] -->
+
+	</ul>
+
+</body>
+</html>

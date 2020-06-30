@@ -61,14 +61,18 @@ class HandlebarsFactory extends Factory
                 case TokenList::T_START_ELEMENT:
                     $element_id = $TokenList->token_data;
 
-                    $element_type = $TokenList->nextData(TokenList::T_START_DEFINITION);
+                    $element_type = $TokenList->nextData(
+                        TokenList::T_START_DEFINITION
+                    );
                     $element_name = $TokenList->nextData(TokenList::T_NAME);
 
                     switch ($element_type) {
                         // Condition
 
                         case 'condition':
-                            $operator = $TokenList->nextData(TokenList::T_OPERATOR);
+                            $operator = $TokenList->nextData(
+                                TokenList::T_OPERATOR
+                            );
                             $value = $TokenList->nextData(TokenList::T_VALUE);
 
                             $helper = 'if';
@@ -98,12 +102,14 @@ class HandlebarsFactory extends Factory
                                 case 'in':
                                 case '!in':
                                     throw new TemplateException(
-                                        'Operators "in" and "!in" are not implemented for Handlebars'
+                                        'Operators "in" and "!in" are not
+                                        implemented for Handlebars'
                                     );
 
                                 default:
                                     throw new TemplateException(
-                                        "Unknown comparison operator {$operator} encountered"
+                                        "Unknown comparison operator
+                                        {$operator} encountered"
                                     );
                             }
 
@@ -115,7 +121,10 @@ class HandlebarsFactory extends Factory
                                 $value = 'false';
                             }
 
-                            new Text('{{#' . $helper . ' ' . $element_name . ' \'' . $value . '\'}}', $Parent);
+                            new Text(
+                                '{{#' . "$helper $element_name '$value'" . '}}',
+                                $Parent
+                            );
 
                             // Build Element content
 
@@ -136,7 +145,10 @@ class HandlebarsFactory extends Factory
                         // Repeater
 
                         case 'repeater':
-                            new Text('{{#each ' . $element_name . '}}', $Parent);
+                            new Text(
+                                '{{#each ' . $element_name . '}}',
+                                $Parent
+                            );
 
                             $TokenList->nextToken(TokenList::T_END_DEFINITION);
 

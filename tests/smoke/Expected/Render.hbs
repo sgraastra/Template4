@@ -1,0 +1,1 @@
+<script type="text/x-handlebars-template"> <ul> {{#ifE showFirst 'true'}} <li data-id="1"> <button>{{item}}</button> </li> {{/ifE}}{{#each items}} <li data-id="{{id}}"> <button class="{{#ifE selected 'true'}}active{{/ifE}}"> {{item}} </button> </li> {{/each}}{{#ifE showLast 'true'}} <li data-id="{{lastId}}"> <button>{{item}}</button> </li> {{/ifE}} </ul> </script> 

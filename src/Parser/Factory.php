@@ -75,8 +75,10 @@ class Factory
 
         // Replace "comment-markers" with actual template-markers
 
-        $comment_start = '/(?:<!--|\/\*)\s*' . preg_quote(self::MARKER_START, '/') . '/';
-        $comment_end = '/' . preg_quote(self::MARKER_END, '/') . '\s*(?:-->|\*\/)/';
+        $comment_start = '/(?:<!--|\/\*)\s*' .
+            preg_quote(self::MARKER_START, '/') . '/';
+        $comment_end = '/' .
+            preg_quote(self::MARKER_END, '/') . '\s*(?:-->|\*\/)/';
 
         $raw_data = (string) preg_replace(
             [
@@ -123,7 +125,10 @@ class Factory
 
         $length = strlen($raw_data);
 
-        assert(strlen(self::MARKER_START) === strlen(self::MARKER_END));
+        if (strlen(self::MARKER_START) !== strlen(self::MARKER_END)) {
+            throw new FactoryException('Failed to setup Template-parser:
+                MARKER_START and MARKER_END should be of equal length');
+        }
         $marker_length = strlen(self::MARKER_START);
 
         $line = 1;
@@ -500,6 +505,12 @@ class Factory
         if ($element_type == 'condition') {
             // Operator
 
+            if (!isset($definition[2])) {
+                throw new InvalidSyntaxException(
+                    'Invalid parameter count for condition-statement'
+                );
+            }
+
             try {
                 self::addOperatorToken($definition[2], $TemplateTokens);
             } catch (FactoryException $e) {
@@ -509,16 +520,26 @@ class Factory
             // Comparison value
 
             $TemplateTokens->end();
-            assert(
-                '$TemplateTokens->token == ' . __NAMESPACE__
-                . '\TokenList::T_OPERATOR'
-            );
+
+            if ($TemplateTokens->token !== TokenList::T_OPERATOR) {
+                throw new FactoryException(
+                    'Invalid token-list: expected "' . TokenList::T_OPERATOR .
+                    '", got "' . $TemplateTokens->token . '"'
+                );
+            }
 
             try {
                 switch ($TemplateTokens->token_data) {
                     case 'in':
                     case '!in':
                         // Sets of values
+                        if (count($definition) < 3) {
+                            throw new InvalidSyntaxException(
+                                'Invalid parameter count for
+                                condition-statement (set of values)'
+                            );
+                        }
+                        /** @var array<string> $definition */
                         self::addValueToken(
                             array_slice($definition, 3),
                             $TemplateTokens
@@ -530,7 +551,8 @@ class Factory
                         // Scalar values
                         if (count($definition) != 4) {
                             throw new InvalidSyntaxException(
-                                'Invalid parameter count for condition-statement'
+                                'Invalid parameter count for
+                                condition-statement (scalar value)'
                             );
                         }
 
@@ -678,8 +700,9 @@ class Factory
          // Not equals
 
             case 'not':
+            case '!is':
             case '!=':
-            case '<>':
+            case '<>':      // XXX: deprecated
                 $TemplateTokens->addToken(TokenList::T_OPERATOR, '!=');
 
                 return;
@@ -699,14 +722,14 @@ class Factory
 
          // Greater
 
-            case 'greater':
-            case 'gt':
+            case 'greater': // XXX: deprecated
+            case 'gt':      // XXX: deprecated
             case '>':
                 $TemplateTokens->addToken(TokenList::T_OPERATOR, '>');
 
                 return;
 
-            case 'gte':
+            case 'gte':     // XXX: deprecated
             case '>=':
                 $TemplateTokens->addToken(TokenList::T_OPERATOR, '>=');
 
@@ -714,14 +737,14 @@ class Factory
 
          // Smaller
 
-            case 'smaller':
-            case 'lt':
+            case 'smaller': // XXX: deprecated
+            case 'lt':      // XXX: deprecated
             case '<':
                 $TemplateTokens->addToken(TokenList::T_OPERATOR, '<');
 
                 return;
 
-            case 'lte':
+            case 'lte':     // XXX: deprecated
             case '<=':
                 $TemplateTokens->addToken(TokenList::T_OPERATOR, '<=');
 
@@ -759,7 +782,9 @@ class Factory
             );
 
             return;
-        } elseif (is_numeric($value)) {
+        }
+
+        if (is_numeric($value)) {
             $TemplateTokens->addToken(TokenList::T_VALUE_INT, (string) $value);
 
             return;
@@ -879,14 +904,17 @@ class Factory
                     // Try an include path relative to the base template file
 
                     if (!file_exists($file_name) || !is_readable($file_name)) {
+                        // Fall-back to path relative to the PHP-file
+
                         $file_name = $TokenList->token_data;
 
-                        // Fall-back to an include path relative to the PHP-file being executed
-
-                        if (!file_exists($file_name) || !is_readable($file_name)) {
+                        if (
+                            !file_exists($file_name) ||
+                            !is_readable($file_name)
+                        ) {
                             throw new FactoryException(
-                                'Error while including "' . basename($file_name) . '",
-                                file not found or access denied'
+                                'Error while including "' . basename($file_name)
+                                . '", file not found or access denied'
                             );
                         }
                     }
@@ -894,14 +922,17 @@ class Factory
                     // Include non-parseable file
 
                     if ($TokenList->token == TokenList::T_INCLUDE) {
-                        $file_contents = (string) @file_get_contents($file_name);
+                        $file_contents =
+                            (string) @file_get_contents($file_name);
 
                         if (trim($file_contents) != '') {
                             new Text($file_contents, $Parent);
                         }
 
                         unset($file_contents);
-                    } elseif ($TokenList->token == TokenList::T_INCLUDE_TEMPLATE) {
+                    } elseif (
+                        $TokenList->token == TokenList::T_INCLUDE_TEMPLATE
+                    ) {
                         // Include template
 
                         $TemplateTokens = self::parseTemplate($file_name);
@@ -909,7 +940,9 @@ class Factory
                         // Attempt to use name provided in TokenList
 
                         try {
-                            $node_name = $TokenList->nextData(TokenList::T_NAME);
+                            $node_name = $TokenList->nextData(
+                                TokenList::T_NAME
+                            );
                         } catch (TokenListException $e) {
                             $node_name = null;
                         }
@@ -918,8 +951,16 @@ class Factory
 
                         if ($node_name === null) {
                             $node_name = basename($TokenList->token_data);
-                            $node_name = substr($node_name, 0, (int) strrpos($node_name, '.'));
-                            $node_name = preg_replace('/[^A-Z0-9]+/i', '', $node_name);
+                            $node_name = substr(
+                                $node_name,
+                                0,
+                                (int) strrpos($node_name, '.')
+                            );
+                            $node_name = preg_replace(
+                                '/[^A-Z0-9]+/i',
+                                '',
+                                $node_name
+                            );
                         }
 
                         self::buildTemplate(
@@ -940,7 +981,9 @@ class Factory
                 case TokenList::T_START_ELEMENT:
                     $element_id = $TokenList->token_data;
 
-                    $element_type = $TokenList->nextData(TokenList::T_START_DEFINITION);
+                    $element_type = $TokenList->nextData(
+                        TokenList::T_START_DEFINITION
+                    );
                     $element_name = $TokenList->nextData(TokenList::T_NAME);
 
                     switch ($element_type) {

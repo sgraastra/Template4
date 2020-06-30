@@ -27,6 +27,8 @@ namespace StudyPortals\Template\Parser{
      *
      * @return mixed
      */
+
+    // @phpstan-ignore-next-line
     function uniqid()
     {
 
@@ -48,13 +50,16 @@ namespace StudyPortals\Template\Tests\Smoke{
     use StudyPortals\Template\Repeater;
     use StudyPortals\Template\Template;
 
+    /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
+
     class TemplateTest extends TestCase
     {
         /**
          * Compare token-list against reference.
          *
          * @return void
-         * @SuppressWarnings(PHPMD.StaticAccess)
          */
 
         public function testTokenList()
@@ -63,7 +68,9 @@ namespace StudyPortals\Template\Tests\Smoke{
             global $mockUniqid;
             $mockUniqid = true;
 
-            $reference = (string) file_get_contents(__DIR__ . '/Expected/TokenList.bin');
+            $reference = (string) file_get_contents(
+                __DIR__ . '/Expected/TokenList.bin'
+            );
             $reference = unserialize($reference);
 
             $tokenList = Factory::parseTemplate(
@@ -139,106 +146,106 @@ namespace StudyPortals\Template\Tests\Smoke{
         public function testRender()
         {
 
-            $Template = Template::create(
+            $template = Template::create(
                 __DIR__ . '/Resources/TemplateTest.tp4'
             );
-            self::fillTemplate($Template);
+            self::fillTemplate($template);
 
             /*
              * If you start getting unexpected failures of this test, ensure
-             * that "Expected/Render.html" is checked out with CRLF line-endings
-             * (Windows), not with LF line-endings.
+             * that "Expected/Render.html" is checked out with LF line-endings.
              */
 
             $this->assertStringEqualsFile(
                 __DIR__ . '/Expected/Render.html',
-                $Template->__toString()
+                $template->__toString()
             );
         }
 
         /**
          * Fill template with test-data prior to rendering it.
          *
-         * @param Template $Template
+         * @param Template $template
          * @return void
          */
 
-        protected static function fillTemplate(Template $Template)
+        protected static function fillTemplate(Template $template)
         {
 
             // Global replaces
 
-            $Template->header1 = 'Testing Testing';
-            $Template->header2 =
-                'Woei <strong style="color: #336699">Woei</strong> Woei';
-            $Template->lipsum_bold = true;
-            $Template->random_string = sha1('Hello World!');
-            $Template->template_file = 'Test.tp4';
+            $template->header1 = 'Testing Testing';
+            $template->header2 =
+                'Hello <strong style="color: #336699">World!</strong>';
+            $template->lipsum_bold = true;
+            $template->random_string = sha1('Hello World!');
 
             // Condition sets
 
-            $Template->in_set = 2;
-            $Template->in_set2 = 'foo';
+            $template->in_set = 2;
+            $template->in_set2 = 'foo';
 
-            $Template->ListWrapper->value = 'correct woei!';
+            $template->ListWrapper->value = 'correct foo!';
 
-            // Recursive repeater (correct approach)
+            // Recursive repeater
 
-            self::recursiveRepeat($Template->ListWrapper->MyList);
+            self::recursiveRepeat($template->ListWrapper->MyList);
 
             // Nested sections
 
-            $Template->Test->NogIets->Iets->lipsum_bold = false;
+            $template->Test->test = 'Hello World!';
 
-            $Template->Test->NogIets->Iets->WoeiTemplate->value1 = '1';
-            $Template->Test->NogIets->Iets->WoeiTemplate->value2 = '12';
-            $Template->Test->NogIets->Iets->WoeiTemplate->value3 = '123';
-            $Template->Test->NogIets->Iets->WoeiTemplate->value4 = '1234';
-            $Template->Test->NogIets->Iets->WoeiTemplate->value5 = '12345';
+            $template->Test->SomethingElse->Something->lipsum_bold = false;
+
+            $template->Test->SomethingElse->Something->FooTemplate->value1 = '1';
+            $template->Test->SomethingElse->Something->FooTemplate->value2 = '12';
+            $template->Test->SomethingElse->Something->FooTemplate->value3 = '123';
+            $template->Test->SomethingElse->Something->FooTemplate->value4 = '1234';
+            $template->Test->SomethingElse->Something->FooTemplate->value5 = '12345';
 
             // Repeater & Scope
 
-            $Template->bullet_item = '<strong>Global</strong>';
+            $template->bullet_item = '<strong>Global</strong>';
 
-            $Template->BulletList->bullet_item = 'One';
-            $Template->BulletList->repeat();
-            $Template->BulletList->bullet_item = 'Two';
-            $Template->BulletList->repeat();
-            $Template->BulletList->repeat();
-            $Template->BulletList->bullet_item = 'Three';
-            $Template->BulletList->repeat();
+            $template->BulletList->bullet_item = 'One';
+            $template->BulletList->repeat();
+            $template->BulletList->bullet_item = 'Two';
+            $template->BulletList->repeat();
+            $template->BulletList->repeat();
+            $template->BulletList->bullet_item = 'Three';
+            $template->BulletList->repeat();
 
-            $Template->BulletList->repeat();
-            $Template->BulletList->repeat();
+            $template->BulletList->repeat();
+            $template->BulletList->repeat();
         }
 
         /**
          * Helper for recursive repeater test.
          *
-         * @param Repeater $Repeater
+         * @param Repeater $repeater
          * @param int $level
          * @return Repeater
          */
 
         protected static function recursiveRepeat(
-            Repeater $Repeater,
+            Repeater $repeater,
             int $level = 1
         ) {
-            $EmptyList = clone $Repeater;
-            $EmptyList->resetTemplate();
+            $emptyList = clone $repeater;
+            $emptyList->resetTemplate();
 
             for ($i = 1; $i <= 2; $i++) {
-                $Repeater->level = "$level-$i";
+                $repeater->level = "$level-$i";
 
                 if ($level <= 4) {
-                    $Repeater->SubList = clone $EmptyList;
-                    self::recursiveRepeat($Repeater->SubList, $level + 1);
+                    $repeater->SubList = clone $emptyList;
+                    self::recursiveRepeat($repeater->SubList, $level + 1);
                 }
 
-                $Repeater->repeat();
+                $repeater->repeat();
             }
 
-            return $Repeater;
+            return $repeater;
         }
 
         /**
@@ -257,12 +264,17 @@ namespace StudyPortals\Template\Tests\Smoke{
                 __DIR__ . '/Resources/TemplateTest.tp4'
             );
 
-            file_put_contents(__DIR__ . '/Expected/TokenList.bin', serialize($tokenList));
+            file_put_contents(
+                __DIR__ . '/Expected/TokenList.bin',
+                serialize($tokenList)
+            );
 
             $mockUniqid = false;
 
             @unlink(__DIR__ . '/Resources/TemplateTest.tp4-cache');
-            $template = Template::create(__DIR__ . '/Resources/TemplateTest.tp4');
+            $template = Template::create(
+                __DIR__ . '/Resources/TemplateTest.tp4'
+            );
 
             $cache = (string) file_get_contents(
                 __DIR__ . '/Resources/TemplateTest.tp4-cache'
@@ -277,7 +289,10 @@ namespace StudyPortals\Template\Tests\Smoke{
 
             TemplateTest::fillTemplate($template);
 
-            file_put_contents(__DIR__ . '/Expected/Render.html', $template->__toString());
+            file_put_contents(
+                __DIR__ . '/Expected/Render.html',
+                $template->__toString()
+            );
         }
     }
 

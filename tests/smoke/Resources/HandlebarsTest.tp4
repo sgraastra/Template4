@@ -1,0 +1,25 @@
+<script type="text/x-handlebars-template">
+  <ul>
+
+    [{if showFirst is true}]
+      <li data-id="1">
+        <button>[{var item}]</button>
+      </li>
+    [{if showFirst end}]
+
+    [{loop items}]
+      <li data-id="[{var id}]">
+        <button class="[{if selected is true}]active[{if selected end}]">
+          [{var item}]
+        </button>
+      </li>
+    [{loop items end}]
+
+    [{if showLast is true}]
+      <li data-id="[{var lastId}]">
+        <button>[{var item}]</button>
+      </li>
+    [{if showLast end}]
+
+  </ul>
+</script>

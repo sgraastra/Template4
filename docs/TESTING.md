@@ -6,8 +6,23 @@ Note that these are **smoke tests**, not fully-fledged unit-tests. The tests
 compare a set of predefined inputs against a set of predefined outputs. In doing
 so they will (most likely) identify any issues with the Template-engine...
 
+- [Relation to template4-parser](#relation-to-template4-parser)
 - [The Tests](#the-tests)
 - [Updating the "Expected" outcomes](#updating-the-expected-outcomes)
+
+## Relation to template4-parser
+
+The template used to validate the Javascript-based
+[template4-parser](https://github.com/studyportals/template4-parser) is nearly
+identical to the one used as a smoke-test for Template4 here.
+
+The main difference is that in some places an updated/simplified syntax (made
+possible by the Jison-based parser-generator) is used that is _not_
+backwards-compatible with the PHP implementation in this repository.
+
+See the
+[Differences with PHP-based implementation](https://github.com/studyportals/template4-parser#differences-with-php-based-implementation)-section
+for more details.
 
 ## The Tests
 

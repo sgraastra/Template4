@@ -2,11 +2,12 @@
 
 - [Lexical-grammar](#lexical-grammar)
 - [Language-grammar](#language-grammar)
+  - [Caveats](#caveats)
 
 Below is a simplified version of the Jison-grammar from
 [studyportals/template4-parser](https://github.com/studyportals/template4-parser).
 
-The grammar has been modified for readability &ndash; this is not functional
+The grammar has been modified for readability &ndash; it is not functional
 Jison-grammar!
 
 ## Lexical-grammar
@@ -28,6 +29,9 @@ Jison-grammar!
 /*<tp4>*/     "include"          return 'TP4_INCLUDE';
 /*<tp4>*/     "in"               return 'TP4_IN';
 /*<tp4>*/     "is"               return 'TP4_IS';
+/*<tp4>*/     "="                return 'TP4_EQ'
+/*<tp4>*/     "<"                return 'TP4_LT'
+/*<tp4>*/     ">"                return 'TP4_GT'
 /*<tp4>*/     "not"|"!"          return 'TP4_NOT';
 /*<tp4>*/     "end"              return 'TP4_END';
 /*<tp4>*/     "template"         return 'TP4_TEMPLATE';
@@ -96,13 +100,19 @@ tp4_string:   TP4_QUOTE TP4_QUOTE
               // "…"
 ;
 
-tp4_operator:   TP4_IS
-              | TP4_NOT
-              | TP4_NOT TP4_IS
+tp4_op:   TP4_IS
+        | TP4_EQ TP4_EQ?    // ==
+        | TP4_NOT
+        | TP4_NOT TP4_IS
+        | TP4_NOT TP4_EQ    // !=
+        | TP4_LT            //  <
+        | TP4_LT TP4_EQ     // <=
+        | TP4_GT            //  >
+        | TP4_GT TP4_EQQ    // >=
 ;
 
-tp4_set_operator:   TP4_IN
-                  | TP4_NOT TP4_IN
+tp4_setop:  TP4_IN          // in
+          | TP4_NOT TP4_IN  // !in
 ;
 
 tp4_as_name:  // empty, or
@@ -111,3 +121,14 @@ tp4_as_name:  // empty, or
 
 %%
 ```
+
+### Caveats
+
+#### Deprecated Operator Aliasses
+
+Several operator aliasses (`greater`, `gt` & `gte` &ndash; `smaller`, `lt` &
+`lte` &ndash; `<>`) present in the PHP-code should be considered deprecated.
+They are all marked as `// XXX: deprecated` in the source code and will &ndash;
+if a new major revision ever gets released &ndash; be removed.
+
+These operator aliasses led to unnecessary complexity in the above grammar.

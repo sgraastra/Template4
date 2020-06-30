@@ -184,16 +184,17 @@ class TokenList
                     $token_data = null;
                 }
 
-                /*
-                 * Empty boolean and integer tokens are allowed since they can
-                 * contain a value of "0".
-                 */
+            /*
+             * Empty boolean and integer tokens are allowed since they can
+             * contain a value of "0".
+             */
 
             case self::T_VALUE_BOOLEAN:
             case self::T_VALUE_INT:
                 if (is_null($token_data)) {
                     throw new TokenListException(
-                        "Token data not allowed to be empty for token \"$token\""
+                        "Token data not allowed to be empty for
+                        token \"$token\""
                     );
                 }
 

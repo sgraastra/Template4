@@ -20,7 +20,8 @@
       <property name="exceptions">
         <value>
           \Mockery,
-          \StudyPortals\Template\Template
+          \StudyPortals\Template\Template,
+          \StudyPortals\Template\Handlebars
         </value>
       </property>
     </properties>

@@ -1,3 +1,6 @@
 # TODO
 
-- [ ] Include a smoke-test for the `Handlebars`-template functionality
+- [ ] Remove all `// XXX: deprecated` operator aliasses from
+      `src/Parser/Factory.php`
+- [ ] Replace all calls to `assert(…)` with exceptions (or remove them
+      alltogether)
