@@ -1,6 +1,10 @@
 # TODO
 
-- [ ] Remove all `// XXX: deprecated` operator aliasses from
-      `src/Parser/Factory.php`
 - [ ] Replace all calls to `assert(…)` with exceptions (or remove them
       alltogether)
+
+## 2.0.0
+- [ ] Remove all `// XXX: deprecated` operator aliasses from
+      `src/Parser/Factory.php`
+- [ ] Use `StudyPortals\Template4` as namespace (perhaps also lowercase
+      the "P" in Studyportals?)
