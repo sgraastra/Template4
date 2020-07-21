@@ -80,8 +80,13 @@ class Replace extends Node
             return '';
         }
 
-
         $value = $this->Parent->getValue($this->replace);
+
+        if ($value === null && $this->getRoot()->isStrict()) {
+            throw new StrictException(
+                "Replace \"{$this->replace}\" has not been set"
+            );
+        }
 
         if (!$this->raw) {
             $value = htmlspecialchars(

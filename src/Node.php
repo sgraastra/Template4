@@ -7,7 +7,7 @@
 
 namespace StudyPortals\Template;
 
-use Exception;
+use Throwable;
 
 abstract class Node
 {
@@ -75,14 +75,20 @@ abstract class Node
     /**
      * Get the root Node of the template tree.
      *
-     * @return Node|NodeTree
+     * @return NodeTree
      */
 
-    public function getRoot()
+    public function getRoot(): NodeTree
     {
 
         if (!($this->Parent instanceof NodeTree)) {
-            assert($this instanceof NodeTree);
+            if (!($this instanceof NodeTree)) {
+                throw new TemplateException(
+                    'Expected root-node to be a StudyPortals\Template\NodeTree,'
+                    . ' got a ' . get_class($this)
+                );
+            }
+
             return $this;
         }
 
@@ -98,40 +104,63 @@ abstract class Node
     abstract public function display(): string;
 
     /**
-     * Display a string representation of the Node.
-     *
-     * If an exception occurs while generating the string representation, this
-     * exception caught and an empty string is returned. This prevents PHP from
-     * generating a fatal error under these circumstances.
+     * Display the Node.
      *
      * @return string
      * @see Node::display()
-     * @SuppressWarnings(PHPMD.ExitExpression)
      */
 
     public function __toString()
     {
 
-        $output = '';
-
-        try {
-            try {
-                $output = $this->display();
-            } catch (Exception $e) {
-                /*
-                 * This is the "poor man's way" of getting the exception message
-                 * out of this situation for debugging purposes (see below).
-                 */
-                assert('false /* Exception: ' . $e->getMessage() . ' */');
-            }
-        } catch (\AssertionError $e) {
-            /*
-             * This bailout is only active in debug-mode (i.e. when assertions
-             * are enabled) - hence the PHPMD suppression.
-             */
-            die((string) $e);
+        if (version_compare('7.4', (string) phpversion()) === 1) {
+            return $this->__toStringWithoutException();
         }
 
-        return $output;
+        return $this->display();
+    }
+
+    /**
+     * Display the Node (and *never* raise an exception).
+     *
+     * In PHP < 7.4, the __toString() magic-method is not allowed to throw an
+     * exception. The implementation below ensures an exception is never raised.
+     *
+     * To aid in debugging, when an exception is caught a string with some
+     * information about the exception is returned. As we have no way of knowing
+     * whether it is appropriate to return detailed debugging information, only
+     * minimal information is returned by default:
+     *      "Namespace/Of/The/Exception in File.php:123"
+     *
+     * Only when the Template is set to "strict", additional in is enabled (which we assume would be used mainly in
+     * development), some more information is added.
+     * We assume "strict" is only used in development-environments.
+     *
+     *
+     * @return string
+     * @see https://wiki.php.net/rfc/tostring_exceptions
+     * @see Template::createStrict()
+     */
+
+    public function __toStringWithoutException(): string
+    {
+
+        try {
+            return $this->display();
+        } catch (Throwable $e) {
+            $class  = get_class($e);
+            $file   = $e->getFile();
+            $line   = $e->getLine();
+
+            $root = $this->getRoot();
+
+            if ($root instanceof Template && $root->isStrict()) {
+                return "$class in $file:$line: {$e->getMessage()} in {$root->getFileName()}";
+            }
+
+            $file = basename($file);
+
+            return "$class in $file:$line";
+        }
     }
 }

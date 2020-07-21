@@ -2,9 +2,13 @@
 
 - [ ] Replace all calls to `assert(…)` with exceptions (or remove them
       alltogether)
+- [ ] Once the first smoke-test fails, the subsequent tests fail with
+      non-obvious error messages (somehow the token-list gets corrupted and
+      remains that way for the subsequent tests)
 
 ## 2.0.0
+
 - [ ] Remove all `// XXX: deprecated` operator aliasses from
       `src/Parser/Factory.php`
-- [ ] Use `StudyPortals\Template4` as namespace (perhaps also lowercase
-      the "P" in Studyportals?)
+- [ ] Use `StudyPortals\Template4` as namespace (perhaps also lowercase the "P"
+      in Studyportals?)

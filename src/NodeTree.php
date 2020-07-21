@@ -19,6 +19,12 @@ abstract class NodeTree extends Node
 {
 
     /**
+     * @var bool
+     */
+
+    protected $strict = false;
+
+    /**
      * @var array<Node> $children
      */
 
@@ -49,6 +55,12 @@ abstract class NodeTree extends Node
         }
 
         parent::__clone();
+    }
+
+    public function isStrict(): bool
+    {
+
+        return $this->strict;
     }
 
     /**

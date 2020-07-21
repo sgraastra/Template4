@@ -152,6 +152,13 @@ class Condition extends NodeTree
             $value = $this->Parent->getValue($this->condition);
         }
 
+        if ($value === null && $this->getRoot()->isStrict()) {
+            throw new StrictException(
+                "Condition \"{$this->condition}\" has not been set"
+            );
+        }
+
+
         if (!$this->compareValue($value)) {
             return '';
         }

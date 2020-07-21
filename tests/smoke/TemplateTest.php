@@ -101,6 +101,7 @@ namespace StudyPortals\Template\Tests\Smoke{
                 __DIR__ . '/Resources/TemplateTest.tp4-cache'
             );
 
+            Template::setTemplateCache('on');
             Template::create(__DIR__ . '/Resources/TemplateTest.tp4');
             $this->assertFileExists(
                 __DIR__ . '/Resources/TemplateTest.tp4-cache'
@@ -146,7 +147,8 @@ namespace StudyPortals\Template\Tests\Smoke{
         public function testRender()
         {
 
-            $template = Template::create(
+            Template::setTemplateCache('off');
+            $template = Template::createStrict(
                 __DIR__ . '/Resources/TemplateTest.tp4'
             );
             self::fillTemplate($template);
@@ -180,12 +182,16 @@ namespace StudyPortals\Template\Tests\Smoke{
             $template->lipsum_bold = true;
             $template->random_string = sha1('Hello World!');
 
-            // Condition sets
+            // Condition statements
+
+            $template->quoted_if = 'Hello World!';
+            $template->quoted_set = 'Foo';
 
             $template->in_set = 2;
             $template->in_set2 = 'foo';
 
             $template->ListWrapper->value = 'correct foo!';
+            $template->Test->test_me = false;
 
             // Recursive repeater
 

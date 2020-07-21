@@ -33,30 +33,30 @@ class Template extends TemplateNodeTree
 {
 
     /**
-     * @var CacheInterface|null $CacheStore
+     * @var CacheInterface|null
      **/
     protected static $CacheStore;
 
     /**
-     * @var boolean $cache_enabled
+     * @var boolean
      */
 
     protected static $cache_enabled = true;
 
     /**
-     * @var array<mixed> $default_variables
+     * @var array<mixed>
      */
 
     protected static $default_variables = [];
 
     /**
-     * @var string $file_name
+     * @var string
      */
 
     protected $file_name;
 
     /**
-     * @var TemplateNodeTree $Parent
+     * @var TemplateNodeTree
      */
 
     protected $Parent;
@@ -200,6 +200,33 @@ class Template extends TemplateNodeTree
                 $e
             );
         }
+    }
+
+    /**
+     * Create a "strict" Template from a template-file.
+     *
+     * With "strict", the below situations will result in an exception
+     * getting raised - in regular mode they are ignored.
+     *
+     *   1. Having variables defined in the template, but not setting them on
+     *      the Template object prior to calling "display" on it.
+     *
+     * N.B. A "strict" Template also provides additional debugging output under
+     * certain circumstances (e.g. @link Node::__toStringWithoutException()). It
+     * is thus *not* advisable to use "strict" in production environments.
+     *
+     * @param string $template_file
+     * @return Template
+     * @throws TemplateException
+     */
+
+    public static function createStrict(string $template_file): Template
+    {
+
+        $template = self::create($template_file);
+        $template->strict = true;
+
+        return $template;
     }
 
     /**

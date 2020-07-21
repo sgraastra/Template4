@@ -43,7 +43,8 @@
   "autoload": {
     "psr-4": {
       "StudyPortals\\Template\\": "src/",
-      "StudyPortals\\Template\\Tests\\Smoke\\": "tests/smoke"
+      "StudyPortals\\Template\\Tests\\Smoke\\": "tests/smoke",
+      "StudyPortals\\Template\\Tests\\Integration\\": "tests/integration"
     }
   }
 }
